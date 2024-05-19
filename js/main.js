@@ -22,6 +22,7 @@ scene.add(wallGroup);
 const posterGroup= new THREE.Group();
 scene.add(posterGroup);
 
+
 const camera = new THREE.PerspectiveCamera(
     75,//field of view
     window.innerWidth/window.innerHeight, //aspect ratio
@@ -191,42 +192,60 @@ const checkCollision=()=>{
     return false;
 };
 document.addEventListener('keydown', (event) => {
+    console.log(event.code);
+    //block Movement
+    const isOnMenu=document.getElementById('menu').style.display==='block';
     switch (event.code) {
         case "KeyW":
             //look up
-            camera.rotateOnAxis(new THREE.Vector3(1,0,0),Math.abs(camera.rotation.x)< LIMIT_ROTATION_X ? ROTATION_SPEED: -ROTATION_SPEED);
+            if(!isOnMenu){
+                camera.rotateOnAxis(new THREE.Vector3(1,0,0),Math.abs(camera.rotation.x)< LIMIT_ROTATION_X ? ROTATION_SPEED: -ROTATION_SPEED);
+            }
             break;
         case "KeyS":
             //look down
-            camera.rotateOnAxis(new THREE.Vector3(1,0,0),Math.abs(camera.rotation.x)< LIMIT_ROTATION_X ? -ROTATION_SPEED: ROTATION_SPEED);
+            if(!isOnMenu){
+            camera.rotateOnAxis(new THREE.Vector3(1,0,0),Math.abs(camera.rotation.x)< LIMIT_ROTATION_X ? -ROTATION_SPEED: ROTATION_SPEED);}
             break;
         case 'KeyD':
             // Rotate camera to the right
+            if(!isOnMenu){
             camera.rotateOnWorldAxis(new THREE.Vector3(0,1,0),-ROTATION_SPEED);
+            }
             break;
         case 'KeyA':
             // Rotate camera to the left
+            if(!isOnMenu){
             camera.rotateOnWorldAxis(new THREE.Vector3(0,1,0),ROTATION_SPEED);
+            }
             break;
         case 'ArrowUp':
             // Move forward in the direction the camera is facing
+            if(!isOnMenu){
             camera.translateZ(!checkCollision() ? -SPEED*Math.cos(camera.position.y):  SPEED*Math.cos(camera.position.y));
             camera.position.setY(FIX_Y);
+            }
             break;
         case 'ArrowDown':
             // Move backward in the opposite direction the camera is facing
+            if(!isOnMenu){
             camera.translateZ(!checkCollision() ? SPEED*Math.cos(camera.position.y): -SPEED*Math.cos(camera.position.y));
             camera.position.setY(FIX_Y);
+            }
             break;
         case 'ArrowRight':
             // Move forward in the direction the camera is facing
+            if(!isOnMenu){
             camera.translateX(!checkCollision() ? SPEED*Math.cos(camera.position.y): - SPEED);
             camera.position.setY(FIX_Y);
+            }
             break;
         case 'ArrowLeft':
             // Move backward in the opposite direction the camera is facing
+            if(!isOnMenu){
             camera.translateX(!checkCollision() ? -SPEED: SPEED);
             camera.position.setY(FIX_Y);
+            }
             break;
         case "KeyR":
             //Reset position
@@ -239,6 +258,12 @@ document.addEventListener('keydown', (event) => {
             console.log(camera.position);
             console.log("Rotation:")
             console.log(camera.rotation);
+            break;
+        case "Enter":
+            document.getElementById('menu').style.display='none';
+            break;
+        case "KeyM":
+            document.getElementById('menu').style.display='block';
             break;
     }
 });
