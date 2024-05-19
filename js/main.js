@@ -1,5 +1,9 @@
 import * as THREE from 'three';
 
+//Z:(-18,18)
+//X:(-18,18)
+//X_theta : (-1,1)
+
 const LENGTH=80;
 const WIDTH=80;
 const INIT_POSITION_Z=5;
@@ -60,7 +64,7 @@ const createPlaneGeometryWithRepeatingTexture=(width,length,imagePath)=>{
     let texture = textureLoader.load(imagePath);
     texture.wrapS = THREE.RepeatWrapping;
     texture.wrapT = THREE.RepeatWrapping;
-    texture.repeat.set(4,4);
+    texture.repeat.set(WIDTH/10,LENGTH/10);
     let material = new THREE.MeshBasicMaterial({map:texture,side:THREE.DoubleSide});
     let mesh = new THREE.Mesh(geometry,material);
     return mesh
@@ -133,9 +137,8 @@ scene.add(ceilingMesh);
 
 //Images story
 const poster1Mesh=createPlaneGeometry(WIDTH/4,LENGTH/4,'images/poster1.jpg');
-poster1Mesh.rotateY(Math.PI/2);
+poster1Mesh.rotateY(-Math.PI/2);
 poster1Mesh.translateZ((-LENGTH/2)+1);
-poster1Mesh.translateX(-WIDTH/5);
 poster1Mesh.translateY(Y_OFFSET);
 console.log("poster1Mesh");
 console.log(poster1Mesh.position);
@@ -145,12 +148,27 @@ posterGroup.add(poster1Mesh);
 const poster2Mesh=createPlaneGeometry(WIDTH/4,LENGTH/4,'images/poster2.jpg');
 poster2Mesh.rotateY(Math.PI/2);
 poster2Mesh.translateZ((-LENGTH/2)+1);
-poster2Mesh.translateX(WIDTH/5);
 poster2Mesh.translateY(Y_OFFSET);
 console.log("poster2Mesh");
 console.log(poster2Mesh.position);
 console.log(poster2Mesh.rotation);
 posterGroup.add(poster2Mesh);
+
+const poster3Mesh=createPlaneGeometry(WIDTH/4,LENGTH/4,'images/poster1.jpg');
+poster3Mesh.translateZ((-LENGTH/2)+1);
+poster3Mesh.translateY(Y_OFFSET);
+console.log("poster3Mesh");
+console.log(poster3Mesh.position);
+console.log(poster3Mesh.rotation);
+posterGroup.add(poster3Mesh);
+
+const poster4Mesh=createPlaneGeometry(WIDTH/4,LENGTH/4,'images/poster2.jpg');
+poster4Mesh.translateZ((LENGTH/2)-1);
+poster4Mesh.translateY(Y_OFFSET);
+console.log("poster4Mesh");
+console.log(poster4Mesh.position);
+console.log(poster4Mesh.rotation);
+posterGroup.add(poster4Mesh);
 
 //Controls
 
@@ -173,10 +191,6 @@ const checkCollision=()=>{
     return false;
 };
 document.addEventListener('keydown', (event) => {
-    //Z:(-18,18)
-    //X:(-18,18)
-    //X_theta : (-1,1)
-    const currentPosition=camera.position;
     switch (event.code) {
         case "KeyW":
             //look up
@@ -219,6 +233,12 @@ document.addEventListener('keydown', (event) => {
             camera.position.setX(0);
             camera.position.setZ(INIT_POSITION_Z);
             camera.rotation.set(0,0,0);
+            break;
+        case "KeyI":
+            console.log("Position:");
+            console.log(camera.position);
+            console.log("Rotation:")
+            console.log(camera.rotation);
             break;
     }
 });
