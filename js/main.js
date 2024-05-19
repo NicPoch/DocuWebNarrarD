@@ -1,10 +1,8 @@
 import * as THREE from 'three';
 
-const LENGTH=45;
-const WIDTH=45;
+const LENGTH=80;
+const WIDTH=80;
 const INIT_POSITION_Z=5;
-const LIMIT_TRANSLATE_X=18;
-const LIMIT_TRANSLATE_Z=18;
 const LIMIT_ROTATION_X=1;
 const Y_OFFSET=5;
 const SPEED = 0.1;
@@ -13,6 +11,12 @@ const FIX_Y=0;
 
 const scene = new THREE.Scene();
 const textureLoader = new THREE.TextureLoader();
+//create wallgroup
+const wallGroup= new THREE.Group();
+scene.add(wallGroup);
+//create poster group
+const posterGroup= new THREE.Group();
+scene.add(posterGroup);
 
 const camera = new THREE.PerspectiveCamera(
     75,//field of view
@@ -51,13 +55,24 @@ const createPlaneGeometry=(width,length,imagePath)=>{
     return mesh
 };
 
+const createPlaneGeometryWithRepeatingTexture=(width,length,imagePath)=>{
+    let geometry = new THREE.PlaneGeometry(width,length);
+    let texture = textureLoader.load(imagePath);
+    texture.wrapS = THREE.RepeatWrapping;
+    texture.wrapT = THREE.RepeatWrapping;
+    texture.repeat.set(4,4);
+    let material = new THREE.MeshBasicMaterial({map:texture,side:THREE.DoubleSide});
+    let mesh = new THREE.Mesh(geometry,material);
+    return mesh
+};
+
 const cubeGeometry=new THREE.BoxGeometry(1,1,1);
 const cubeMaterial = new THREE.MeshBasicMaterial({color:'blue'});
 const cubeMesh = new THREE.Mesh(cubeGeometry,cubeMaterial);
 scene.add(cubeMesh);
 
 //Create floor
-const floorMesh=createPlaneGeometry(WIDTH,LENGTH,'images/piso.jpeg');
+const floorMesh=createPlaneGeometryWithRepeatingTexture(WIDTH,LENGTH,'images/piso.jpeg');
 floorMesh.rotateX(Math.PI/2);
 floorMesh.rotateY(-Math.PI);
 floorMesh.position.setY(-Y_OFFSET);
@@ -66,9 +81,6 @@ console.log(floorMesh.position);
 console.log(floorMesh.rotation);
 scene.add(floorMesh);
 
-//create walls
-const wallGroup= new THREE.Group();
-scene.add(wallGroup);
 //front wall
 const frontWallMesh=createPlaneGeometry(WIDTH,LENGTH,'images/imgFront.jpg');
 frontWallMesh.translateZ(-WIDTH/2);
@@ -103,6 +115,11 @@ console.log("rightWallMesh");
 console.log(rightWallMesh.position);
 console.log(rightWallMesh.rotation);
 wallGroup.add(rightWallMesh);
+//collisions on wall
+wallGroup.children.forEach((w)=>{
+    w.BoundingBox=new THREE.Box3();
+    w.BoundingBox.setFromObject(w);
+});
 
 //Ceiling
 const ceilingMesh=createPlaneGeometry(WIDTH,LENGTH,'images/imgCeiling.jpg');
@@ -123,7 +140,7 @@ poster1Mesh.translateY(Y_OFFSET);
 console.log("poster1Mesh");
 console.log(poster1Mesh.position);
 console.log(poster1Mesh.rotation);
-scene.add(poster1Mesh);
+posterGroup.add(poster1Mesh);
 
 const poster2Mesh=createPlaneGeometry(WIDTH/4,LENGTH/4,'images/poster2.jpg');
 poster2Mesh.rotateY(Math.PI/2);
@@ -133,14 +150,33 @@ poster2Mesh.translateY(Y_OFFSET);
 console.log("poster2Mesh");
 console.log(poster2Mesh.position);
 console.log(poster2Mesh.rotation);
-scene.add(poster2Mesh);
+posterGroup.add(poster2Mesh);
 
 //Controls
 
+//Check collisions
+
+const checkCollision=()=>{
+    const playerBoundingBox=new THREE.Box3();
+    const cameraWorldPosition = new THREE.Vector3();
+    camera.getWorldPosition(cameraWorldPosition);
+    playerBoundingBox.setFromCenterAndSize(
+        cameraWorldPosition,
+        new THREE.Vector3(3,3,3)
+    )
+    for (let index = 0; index < wallGroup.children.length; index++) {
+        const wall = wallGroup.children[index];
+        if(playerBoundingBox.intersectsBox(wall.BoundingBox)){
+            return true;
+        }
+    }
+    return false;
+};
 document.addEventListener('keydown', (event) => {
     //Z:(-18,18)
     //X:(-18,18)
     //X_theta : (-1,1)
+    const currentPosition=camera.position;
     switch (event.code) {
         case "KeyW":
             //look up
@@ -160,22 +196,22 @@ document.addEventListener('keydown', (event) => {
             break;
         case 'ArrowUp':
             // Move forward in the direction the camera is facing
-            camera.translateZ(Math.abs(camera.position.z)<LIMIT_TRANSLATE_Z ? -SPEED*Math.cos(camera.position.y):  SPEED*Math.cos(camera.position.y));
+            camera.translateZ(!checkCollision() ? -SPEED*Math.cos(camera.position.y):  SPEED*Math.cos(camera.position.y));
             camera.position.setY(FIX_Y);
             break;
         case 'ArrowDown':
             // Move backward in the opposite direction the camera is facing
-            camera.translateZ(Math.abs(camera.position.z)<LIMIT_TRANSLATE_Z ? SPEED*Math.cos(camera.position.y): -SPEED*Math.cos(camera.position.y));
+            camera.translateZ(!checkCollision() ? SPEED*Math.cos(camera.position.y): -SPEED*Math.cos(camera.position.y));
             camera.position.setY(FIX_Y);
             break;
         case 'ArrowRight':
             // Move forward in the direction the camera is facing
-            camera.translateX(Math.abs(camera.position.x)<LIMIT_TRANSLATE_X ? SPEED*Math.cos(camera.position.y): - SPEED*Math.cos(camera.position.y));
+            camera.translateX(!checkCollision() ? SPEED*Math.cos(camera.position.y): - SPEED);
             camera.position.setY(FIX_Y);
             break;
         case 'ArrowLeft':
             // Move backward in the opposite direction the camera is facing
-            camera.translateX(Math.abs(camera.position.x)<LIMIT_TRANSLATE_X ? -SPEED: SPEED);
+            camera.translateX(!checkCollision() ? -SPEED: SPEED);
             camera.position.setY(FIX_Y);
             break;
         case "KeyR":
