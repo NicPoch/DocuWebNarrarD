@@ -194,7 +194,8 @@ const checkCollision=()=>{
 document.addEventListener('keydown', (event) => {
     console.log(event.code);
     //block Movement
-    const isOnMenu=document.getElementById('menu').style.display==='block';
+    console.log(document.getElementById('menu').style);
+    const isOnMenu=document.getElementById('menu').style.display==='block' || document.getElementById('menu').style.display==='';
     switch (event.code) {
         case "KeyW":
             //look up
