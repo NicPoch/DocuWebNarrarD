@@ -231,23 +231,6 @@ const checkCollisionWall=()=>{
     return false;
 };
 
-const checkCollisionResource=()=>{
-    const playerBoundingBox=new THREE.Box3();
-    const cameraWorldPosition = new THREE.Vector3();
-    camera.getWorldPosition(cameraWorldPosition);
-    playerBoundingBox.setFromCenterAndSize(
-        cameraWorldPosition,
-        new THREE.Vector3(45,45,45)
-    )
-    for (let index = 0; index < posterGroup.children.length; index++) {
-        const poster = posterGroup.children[index];
-        if(playerBoundingBox.intersectsBox(poster.BoundingBox)){
-            return true;
-        }
-    }
-    return false;
-};
-
 const checkCollisionVideoResource=()=>{
     const playerBoundingBox=new THREE.Box3();
     const cameraWorldPosition = new THREE.Vector3();
@@ -282,22 +265,6 @@ const selectResourceAndCheckCollisionVideo=()=>{
     return -1;
 }
 
-const selectResourceAndCheckCollisionPoster=()=>{
-    const playerBoundingBox=new THREE.Box3();
-    const cameraWorldPosition = new THREE.Vector3();
-    camera.getWorldPosition(cameraWorldPosition);
-    playerBoundingBox.setFromCenterAndSize(
-        cameraWorldPosition,
-        new THREE.Vector3(45,45,45)
-    )
-    for (let index = 0; index < posterGroup.children.length; index++) {
-        const poster = posterGroup.children[index];
-        if(playerBoundingBox.intersectsBox(poster.BoundingBox)){
-            return index;
-        }
-    }
-    return -1;
-}
 
 document.addEventListener('keydown', (event) => {
     //block Movement
@@ -306,13 +273,14 @@ document.addEventListener('keydown', (event) => {
         case "KeyW":
             //look up
             if(!isOnMenu){
-                camera.rotateOnAxis(new THREE.Vector3(1,0,0),Math.abs(camera.rotation.x)< LIMIT_ROTATION_X ? ROTATION_SPEED: -ROTATION_SPEED);
+                camera.rotateOnAxis(new THREE.Vector3(1,0,0),Math.abs(camera.rotation.x)< LIMIT_ROTATION_X ? ROTATION_SPEED*Math.cos(camera.rotation.x): -ROTATION_SPEED*Math.cos(camera.rotation.x));
             }
             break;
         case "KeyS":
             //look down
             if(!isOnMenu){
-            camera.rotateOnAxis(new THREE.Vector3(1,0,0),Math.abs(camera.rotation.x)< LIMIT_ROTATION_X ? -ROTATION_SPEED: ROTATION_SPEED);}
+            camera.rotateOnAxis(new THREE.Vector3(1,0,0),Math.abs(camera.rotation.x)< LIMIT_ROTATION_X ? -ROTATION_SPEED*Math.cos(camera.rotation.x): ROTATION_SPEED*Math.cos(camera.rotation.x));
+            }
             break;
         case 'KeyD':
             // Rotate camera to the right
@@ -375,13 +343,6 @@ document.addEventListener('keydown', (event) => {
         case "KeyH":
             helpMenu.style.display=(helpMenu.style.display==='block' || helpMenu.style.display==='') ? 'none' : 'block';
             break;
-    }
-    if(checkCollisionResource()){
-        console.log(selectResourceAndCheckCollisionPoster());
-        displayInfoCard(ORDERED_RESOURCES[selectResourceAndCheckCollisionPoster()]);
-    }
-    else{
-        hideInfoCard();
     }
 
     if(checkCollisionVideoResource()){
