@@ -113,10 +113,6 @@ const createPlaneGeometryWithVideoTexture=(width,length,reference)=>{
     return mesh
 };
 
-const cubeGeometry=new THREE.BoxGeometry(1,1,1);
-const cubeMaterial = new THREE.MeshBasicMaterial({color:'blue'});
-const cubeMesh = new THREE.Mesh(cubeGeometry,cubeMaterial);
-scene.add(cubeMesh);
 
 //Create floor
 const floorMesh=createPlaneGeometryWithRepeatingTexture(WIDTH,LENGTH,'images/piso.jpeg');
@@ -224,7 +220,7 @@ const checkCollisionWall=()=>{
     camera.getWorldPosition(cameraWorldPosition);
     playerBoundingBox.setFromCenterAndSize(
         cameraWorldPosition,
-        new THREE.Vector3(3,3,3)
+        new THREE.Vector3(45,45,45)
     )
     for (let index = 0; index < wallGroup.children.length; index++) {
         const wall = wallGroup.children[index];
@@ -241,7 +237,7 @@ const checkCollisionResource=()=>{
     camera.getWorldPosition(cameraWorldPosition);
     playerBoundingBox.setFromCenterAndSize(
         cameraWorldPosition,
-        new THREE.Vector3(40,40,40)
+        new THREE.Vector3(45,45,45)
     )
     for (let index = 0; index < posterGroup.children.length; index++) {
         const poster = posterGroup.children[index];
@@ -258,7 +254,7 @@ const checkCollisionVideoResource=()=>{
     camera.getWorldPosition(cameraWorldPosition);
     playerBoundingBox.setFromCenterAndSize(
         cameraWorldPosition,
-        new THREE.Vector3(40,40,40)
+        new THREE.Vector3(45,45,45)
     )
     for (let index = 0; index < posterGroup.children.filter((p)=>p.material.map.constructor.name=="VideoTexture").length; index++) {
         const poster = posterGroup.children.filter((p)=>p.material.map.constructor.name=="VideoTexture")[index];
@@ -275,7 +271,7 @@ const selectResourceAndCheckCollisionVideo=()=>{
     camera.getWorldPosition(cameraWorldPosition);
     playerBoundingBox.setFromCenterAndSize(
         cameraWorldPosition,
-        new THREE.Vector3(40,40,40)
+        new THREE.Vector3(45,45,45)
     )
     for (let index = 0; index < posterGroup.children.filter((p)=>p.material.map.constructor.name=="VideoTexture").length; index++) {
         const poster = posterGroup.children.filter((p)=>p.material.map.constructor.name=="VideoTexture")[index];
@@ -292,7 +288,7 @@ const selectResourceAndCheckCollisionPoster=()=>{
     camera.getWorldPosition(cameraWorldPosition);
     playerBoundingBox.setFromCenterAndSize(
         cameraWorldPosition,
-        new THREE.Vector3(40,40,40)
+        new THREE.Vector3(45,45,45)
     )
     for (let index = 0; index < posterGroup.children.length; index++) {
         const poster = posterGroup.children[index];
@@ -399,9 +395,6 @@ document.addEventListener('keydown', (event) => {
 
 //Render
 let animationLoop=function(){
-    cubeMesh.rotateX(0.03);
-    cubeMesh.rotateZ(0.02);
-    cubeMesh.rotateY(0.01);
     renderer.render(scene,camera);
     requestAnimationFrame(animationLoop);
 };
