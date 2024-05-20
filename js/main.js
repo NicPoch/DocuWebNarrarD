@@ -220,7 +220,7 @@ const checkCollisionWall=()=>{
     camera.getWorldPosition(cameraWorldPosition);
     playerBoundingBox.setFromCenterAndSize(
         cameraWorldPosition,
-        new THREE.Vector3(45,45,45)
+        new THREE.Vector3(3,3,3)
     )
     for (let index = 0; index < wallGroup.children.length; index++) {
         const wall = wallGroup.children[index];
