@@ -21,6 +21,38 @@ scene.add(wallGroup);
 //create poster group
 const posterGroup= new THREE.Group();
 scene.add(posterGroup);
+//create video group
+const videoGroup= new THREE.Group();
+scene.add(videoGroup);
+//HTML
+const helpMenu=document.getElementById('info-content');
+const menu=document.getElementById('menu');
+const videoLibrerosUnidos=document.getElementById('libreros-unidos');
+const videoHistoriasEntrelazadas=document.getElementById('historias-entrelazadas');
+//text per resource
+const libreria={
+    "titulo":"titulo libreria",
+    "personas":"personas libreria",
+    "texto":"texto libreria"
+};
+const historiasEntrelazadas={
+    "titulo":"titulo historiasEntrelazadas",
+    "personas":"personas historiasEntrelazadas",
+    "texto":"texto historiasEntrelazadas"
+};
+const mafe={
+    "titulo":"titulo mafe",
+    "personas":"personas mafe",
+    "texto":"texto mafe"
+};
+const librerosUnidos={
+    "titulo":"titulo librerosUnidos",
+    "personas":"personas librerosUnidos",
+    "texto":"texto librerosUnidos"
+};
+
+const ORDERED_RESOURCES=[libreria,historiasEntrelazadas,mafe,librerosUnidos];
+const ORDERED_VIDEOS=[videoLibrerosUnidos,videoHistoriasEntrelazadas];
 
 
 const camera = new THREE.PerspectiveCamera(
@@ -71,6 +103,16 @@ const createPlaneGeometryWithRepeatingTexture=(width,length,imagePath)=>{
     return mesh
 };
 
+const createPlaneGeometryWithVideoTexture=(width,length,reference)=>{
+    let geometry = new THREE.PlaneGeometry(width,length);
+    let texture = new THREE.VideoTexture(reference);
+    texture.minFilter= THREE.LinearFilter;
+    texture.magFilter= THREE.LinearFilter;
+    let material = new THREE.MeshBasicMaterial({map:texture,side:THREE.DoubleSide});
+    let mesh = new THREE.Mesh(geometry,material);
+    return mesh
+};
+
 const cubeGeometry=new THREE.BoxGeometry(1,1,1);
 const cubeMaterial = new THREE.MeshBasicMaterial({color:'blue'});
 const cubeMesh = new THREE.Mesh(cubeGeometry,cubeMaterial);
@@ -81,44 +123,29 @@ const floorMesh=createPlaneGeometryWithRepeatingTexture(WIDTH,LENGTH,'images/pis
 floorMesh.rotateX(Math.PI/2);
 floorMesh.rotateY(-Math.PI);
 floorMesh.position.setY(-Y_OFFSET);
-console.log("floorMesh");
-console.log(floorMesh.position);
-console.log(floorMesh.rotation);
 scene.add(floorMesh);
 
 //front wall
 const frontWallMesh=createPlaneGeometry(WIDTH,LENGTH,'images/imgFront.jpg');
 frontWallMesh.translateZ(-WIDTH/2);
 frontWallMesh.translateY((LENGTH/2)-Y_OFFSET);
-console.log("frontWallMesh");
-console.log(frontWallMesh.position);
-console.log(frontWallMesh.rotation);
 wallGroup.add(frontWallMesh);
 //back wall
 const backWallMesh=createPlaneGeometry(WIDTH,LENGTH,'images/imgBack.jpeg');
 backWallMesh.translateZ(WIDTH/2);
 backWallMesh.translateY((LENGTH/2)-Y_OFFSET);
-console.log("backWallMesh");
-console.log(backWallMesh.position);
-console.log(backWallMesh.rotation);
 wallGroup.add(backWallMesh);
 //left wall
 const leftWallMesh=createPlaneGeometry(WIDTH,LENGTH,'images/imgLeft.jpeg');
 leftWallMesh.rotateY(Math.PI/2);
 leftWallMesh.translateZ(LENGTH/2);
 leftWallMesh.translateY((WIDTH/2)-Y_OFFSET);
-console.log("leftWallMesh");
-console.log(leftWallMesh.position);
-console.log(leftWallMesh.rotation);
 wallGroup.add(leftWallMesh);
 //right wall
 const rightWallMesh=createPlaneGeometry(WIDTH,LENGTH,'images/imgRight.jpeg');
 rightWallMesh.rotateY(Math.PI/2);
 rightWallMesh.translateZ(-LENGTH/2);
 rightWallMesh.translateY((WIDTH/2)-Y_OFFSET);
-console.log("rightWallMesh");
-console.log(rightWallMesh.position);
-console.log(rightWallMesh.rotation);
 wallGroup.add(rightWallMesh);
 //collisions on wall
 wallGroup.children.forEach((w)=>{
@@ -131,51 +158,67 @@ const ceilingMesh=createPlaneGeometry(WIDTH,LENGTH,'images/imgCeiling.jpg');
 ceilingMesh.rotateX(Math.PI/2);
 ceilingMesh.rotateY(-Math.PI);
 ceilingMesh.position.setY(LENGTH-Y_OFFSET);
-console.log("ceilingMesh");
-console.log(ceilingMesh.position);
-console.log(ceilingMesh.rotation);
 scene.add(ceilingMesh);
 
 //Images story
-const poster1Mesh=createPlaneGeometry(WIDTH/4,LENGTH/4,'images/poster1.jpg');
+const poster1Mesh=createPlaneGeometry(WIDTH/4,LENGTH/4,'images/mafe.jpg');
 poster1Mesh.rotateY(-Math.PI/2);
 poster1Mesh.translateZ((-LENGTH/2)+1);
 poster1Mesh.translateY(Y_OFFSET);
-console.log("poster1Mesh");
-console.log(poster1Mesh.position);
-console.log(poster1Mesh.rotation);
 posterGroup.add(poster1Mesh);
 
-const poster2Mesh=createPlaneGeometry(WIDTH/4,LENGTH/4,'images/poster2.jpg');
+const poster2Mesh=createPlaneGeometryWithVideoTexture(WIDTH/4,LENGTH/4,videoLibrerosUnidos);
 poster2Mesh.rotateY(Math.PI/2);
 poster2Mesh.translateZ((-LENGTH/2)+1);
 poster2Mesh.translateY(Y_OFFSET);
-console.log("poster2Mesh");
-console.log(poster2Mesh.position);
-console.log(poster2Mesh.rotation);
 posterGroup.add(poster2Mesh);
 
-const poster3Mesh=createPlaneGeometry(WIDTH/4,LENGTH/4,'images/poster1.jpg');
+const poster3Mesh=createPlaneGeometryWithVideoTexture(WIDTH/4,LENGTH/4,videoHistoriasEntrelazadas);
 poster3Mesh.translateZ((-LENGTH/2)+1);
 poster3Mesh.translateY(Y_OFFSET);
-console.log("poster3Mesh");
-console.log(poster3Mesh.position);
-console.log(poster3Mesh.rotation);
 posterGroup.add(poster3Mesh);
 
-const poster4Mesh=createPlaneGeometry(WIDTH/4,LENGTH/4,'images/poster2.jpg');
+const poster4Mesh=createPlaneGeometry(WIDTH/4,LENGTH/4,'images/libreria.jpg');
 poster4Mesh.translateZ((LENGTH/2)-1);
 poster4Mesh.translateY(Y_OFFSET);
-console.log("poster4Mesh");
-console.log(poster4Mesh.position);
-console.log(poster4Mesh.rotation);
 posterGroup.add(poster4Mesh);
+
+posterGroup.children.forEach((p)=>{
+    p.BoundingBox=new THREE.Box3();
+    p.BoundingBox.setFromObject(p);
+});
+
+
+//Stories
+const displayInfoCard=(info)=>{
+    const infoElement=document.getElementById('historia-info');
+    infoElement.innerHTML=`
+        <h3>${info.titulo}</h3>
+        <p>${info.personas}</p>
+        <p>${info.texto}</p>
+    `;
+    infoElement.classList.add("show");
+};
+
+const hideInfoCard=()=>{
+    const infoElement=document.getElementById('historia-info');
+    infoElement.classList.remove("show");
+};
+
+const playVideo=(video)=>{
+    video.play();
+}
+
+const pauseVideos=()=>{
+    ORDERED_VIDEOS.forEach((v)=>{
+        v.pause();
+    });
+};
 
 //Controls
 
 //Check collisions
-
-const checkCollision=()=>{
+const checkCollisionWall=()=>{
     const playerBoundingBox=new THREE.Box3();
     const cameraWorldPosition = new THREE.Vector3();
     camera.getWorldPosition(cameraWorldPosition);
@@ -191,11 +234,78 @@ const checkCollision=()=>{
     }
     return false;
 };
+
+const checkCollisionResource=()=>{
+    const playerBoundingBox=new THREE.Box3();
+    const cameraWorldPosition = new THREE.Vector3();
+    camera.getWorldPosition(cameraWorldPosition);
+    playerBoundingBox.setFromCenterAndSize(
+        cameraWorldPosition,
+        new THREE.Vector3(40,40,40)
+    )
+    for (let index = 0; index < posterGroup.children.length; index++) {
+        const poster = posterGroup.children[index];
+        if(playerBoundingBox.intersectsBox(poster.BoundingBox)){
+            return true;
+        }
+    }
+    return false;
+};
+
+const checkCollisionVideoResource=()=>{
+    const playerBoundingBox=new THREE.Box3();
+    const cameraWorldPosition = new THREE.Vector3();
+    camera.getWorldPosition(cameraWorldPosition);
+    playerBoundingBox.setFromCenterAndSize(
+        cameraWorldPosition,
+        new THREE.Vector3(40,40,40)
+    )
+    for (let index = 0; index < posterGroup.children.filter((p)=>p.material.map.constructor.name=="VideoTexture").length; index++) {
+        const poster = posterGroup.children.filter((p)=>p.material.map.constructor.name=="VideoTexture")[index];
+        if(playerBoundingBox.intersectsBox(poster.BoundingBox)){
+            return true;
+        }
+    }
+    return false;
+};
+
+const selectResourceAndCheckCollisionVideo=()=>{
+    const playerBoundingBox=new THREE.Box3();
+    const cameraWorldPosition = new THREE.Vector3();
+    camera.getWorldPosition(cameraWorldPosition);
+    playerBoundingBox.setFromCenterAndSize(
+        cameraWorldPosition,
+        new THREE.Vector3(40,40,40)
+    )
+    for (let index = 0; index < posterGroup.children.filter((p)=>p.material.map.constructor.name=="VideoTexture").length; index++) {
+        const poster = posterGroup.children.filter((p)=>p.material.map.constructor.name=="VideoTexture")[index];
+        if(playerBoundingBox.intersectsBox(poster.BoundingBox)){
+            return index;
+        }
+    }
+    return -1;
+}
+
+const selectResourceAndCheckCollisionPoster=()=>{
+    const playerBoundingBox=new THREE.Box3();
+    const cameraWorldPosition = new THREE.Vector3();
+    camera.getWorldPosition(cameraWorldPosition);
+    playerBoundingBox.setFromCenterAndSize(
+        cameraWorldPosition,
+        new THREE.Vector3(40,40,40)
+    )
+    for (let index = 0; index < posterGroup.children.length; index++) {
+        const poster = posterGroup.children[index];
+        if(playerBoundingBox.intersectsBox(poster.BoundingBox)){
+            return index;
+        }
+    }
+    return -1;
+}
+
 document.addEventListener('keydown', (event) => {
-    console.log(event.code);
     //block Movement
-    console.log(document.getElementById('menu').style);
-    const isOnMenu=document.getElementById('menu').style.display==='block' || document.getElementById('menu').style.display==='';
+    const isOnMenu=menu.style.display==='block' || menu.style.display==='';
     switch (event.code) {
         case "KeyW":
             //look up
@@ -223,28 +333,28 @@ document.addEventListener('keydown', (event) => {
         case 'ArrowUp':
             // Move forward in the direction the camera is facing
             if(!isOnMenu){
-            camera.translateZ(!checkCollision() ? -SPEED*Math.cos(camera.position.y):  SPEED*Math.cos(camera.position.y));
+            camera.translateZ(!checkCollisionWall() ? -SPEED*Math.cos(camera.position.y):  SPEED*Math.cos(camera.position.y));
             camera.position.setY(FIX_Y);
             }
             break;
         case 'ArrowDown':
             // Move backward in the opposite direction the camera is facing
             if(!isOnMenu){
-            camera.translateZ(!checkCollision() ? SPEED*Math.cos(camera.position.y): -SPEED*Math.cos(camera.position.y));
+            camera.translateZ(!checkCollisionWall() ? SPEED*Math.cos(camera.position.y): -SPEED*Math.cos(camera.position.y));
             camera.position.setY(FIX_Y);
             }
             break;
         case 'ArrowRight':
             // Move forward in the direction the camera is facing
             if(!isOnMenu){
-            camera.translateX(!checkCollision() ? SPEED*Math.cos(camera.position.y): - SPEED);
+            camera.translateX(!checkCollisionWall() ? SPEED*Math.cos(camera.position.y): - SPEED);
             camera.position.setY(FIX_Y);
             }
             break;
         case 'ArrowLeft':
             // Move backward in the opposite direction the camera is facing
             if(!isOnMenu){
-            camera.translateX(!checkCollision() ? -SPEED: SPEED);
+            camera.translateX(!checkCollisionWall() ? -SPEED: SPEED);
             camera.position.setY(FIX_Y);
             }
             break;
@@ -266,6 +376,23 @@ document.addEventListener('keydown', (event) => {
         case "KeyM":
             document.getElementById('menu').style.display='block';
             break;
+        case "KeyH":
+            helpMenu.style.display=(helpMenu.style.display==='block' || helpMenu.style.display==='') ? 'none' : 'block';
+            break;
+    }
+    if(checkCollisionResource()){
+        console.log(selectResourceAndCheckCollisionPoster());
+        displayInfoCard(ORDERED_RESOURCES[selectResourceAndCheckCollisionPoster()]);
+    }
+    else{
+        hideInfoCard();
+    }
+
+    if(checkCollisionVideoResource()){
+        playVideo(ORDERED_VIDEOS[selectResourceAndCheckCollisionVideo()]);
+    }
+    else {
+        pauseVideos()
     }
 });
 
